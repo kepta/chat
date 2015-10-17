@@ -75,7 +75,7 @@ struct PACKET pack;
 	    perror("No bytes received at client");
 	    exit(0);
        }
-    printf("Client %s: %s \n",pack.alias,pack.buff);
+    printf("\nMessage received: %s: %s \n",pack.alias,pack.buff);
    }
 
 }
@@ -115,7 +115,6 @@ int main(int argc, char *argv[])
                         strcpy(packet.alias, argv[2]);
 			strcpy(packet.connectTo, argv[3]);
                         strcpy(packet.buff, buffer);
-			packet.myFd = myGlobalFd;
 
 /* send request to close this connetion */
                         int sent = send(sockfd, (void *)&packet, sizeof(struct PACKET), 0);
