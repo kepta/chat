@@ -16,11 +16,8 @@ int tracker = 0;
 
 void sigintHandler(int sig_num)
 {
-        /* Reset handler to catch SIGINT next time.
-           Refer http://en.cppreference.com/w/c/program/signal */
         signal(SIGINT, sigintHandler);
         printf("\n Termination \n");
-        // close(client_sockfd);
         exit(1);
 }
 
