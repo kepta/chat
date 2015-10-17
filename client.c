@@ -17,6 +17,8 @@ struct PACKET {
         char alias[ALIASLEN]; // client's alias
         char buff[BUFFSIZE]; // payload
 	char connectTo[20];
+	int list;
+	char *names[20];
 
 };
 
@@ -75,8 +77,17 @@ struct PACKET pack;
 	    perror("No bytes received at client");
 	    exit(0);
        }
-    printf("\nMessage received: %s: %s \n",pack.alias,pack.buff);
+	if(pack.list == 1){
+	printf("List of online users is:\n");
+	int i;
+	for( i = 0 ; ;i++){
+		
+	}
+	else
+    		printf("\nMessage received from %s: %s \n",pack.alias,pack.buff);
+	
    }
+
 
 }
 
@@ -108,17 +119,39 @@ int main(int argc, char *argv[])
                  pthread_create(&thread_info.thread_ID, NULL, server_handler, ( void *) &thread_info);
                 while(1){
 			sleep(1);
-                        printf("Enter your message:");
+                        printf("1. See online users\n2. Message user!");
                         bzero(buffer,1024);
                         fgets(buffer,1024,stdin);
-                        memset(&packet, 0, sizeof(struct PACKET));
-                        strcpy(packet.alias, argv[2]);
-			strcpy(packet.connectTo, argv[3]);
-                        strcpy(packet.buff, buffer);
+			printf("this%s\n",buffer);
 
+			if(!strcmp(buffer,"1\n")){
+					
+				packet.list = 1;	
+	                        send(sockfd, (void *)&packet, sizeof(struct PACKET), 0);
+			}
+
+			else if(strcmp(buffer,"2\n") == 0){
+                        
+			memset(&packet, 0, sizeof(struct PACKET));
+                        strcpy(packet.alias, argv[2]);
+			printf("Enter user name:");
+			bzero(buffer,1024);
+                        fgets(buffer,1024,stdin);
+			strcpy(packet.connectTo, buffer);
+			printf("Enter message:");
+			bzero(buffer,1024);
+                        fgets(buffer,1024,stdin);
+                        strcpy(packet.buff,buffer);
+			packet.list = 0;
 /* send request to close this connetion */
                         int sent = send(sockfd, (void *)&packet, sizeof(struct PACKET), 0);
                         printf("%d\n",sockfd);
+		 
+ 		}
+			
+			else{
+				printf("Enter valid choice");
+			}
 
 		}
         

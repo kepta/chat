@@ -36,6 +36,8 @@ struct PACKET {
         char alias[ALIASLEN]; // client's alias
         char buff[BUFFSIZE];
 	char connectTo[20];
+	int list;
+	char *names[20];
 	
  // payload
 };
@@ -57,7 +59,20 @@ void *client_handler(void *fd) {
 	globalList[tracker] = thread_info.sockfd;
 	globalListName[tracker] = packet.alias;
 	tracker++;
-	
+
+	if(packet.list == 1){
+		int i;
+		for( i = 0 ; i< tracker ; i++)
+			packet.names[i] = globalListName[i];
+
+		if(send(thread_info.sockfd, (void *)&packet, sizeof(struct PACKET), 0) < 0){
+			perror("Send to client error");
+			exit(1);
+		}
+			
+	}
+	else
+	 {
 	int i;
 	for(i = 0; i < tracker ; i++){
 
@@ -74,12 +89,14 @@ void *client_handler(void *fd) {
 
 	if(i == tracker){
 		
-		strcpy(packet.buff,"User is offline!");
-		if(send(thread_info.sockfd, (void *)&packet, sizeof(struct PACKET), 0) < 0){
-		perror("Send to client error");
-		exit(1);
-		}
-	}
+			strcpy(packet.buff,"User is offline!");
+			if(send(thread_info.sockfd, (void *)&packet, sizeof(struct PACKET), 0) < 0){
+			perror("Send to client error");
+			exit(1);
+			}
+		 }
+		
+    	}
     }
 }
 int main( int argc, char *argv[] )
