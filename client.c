@@ -22,6 +22,13 @@ void client(int argc, char *argv[], int sockfd, int port) {
                 perror("Error! use -host HOSTNAME\n");
                 exit(1);
         }
+        if (arg_finder("-id") != -1) {
+                strcpy(packet.alias, argv[arg_finder("-id") +1]);
+                printf("looking for id: %s\n", packet.alias);
+        } else {
+                perror("Error! use -id ID\n");
+                exit(1);
+        }
         connect_with_server(sockfd, port, host);
         struct THREAD_INFO thread_info;
         thread_info.sockfd = sockfd;
@@ -31,9 +38,11 @@ void client(int argc, char *argv[], int sockfd, int port) {
                 // printf("1. See online users!\n2. Message user! \n");
                 bzero(buffer,1024);
                 fgets(buffer,1024,stdin);
+                // char opt = feature(buffer);
+                // printf("opt %c\n",opt);
                 if (strcmp(buffer,"list\n") == 0) {
                         strcpy(packet.option, "list");
-                        printf("lister\n");
+                        // printf("lister\n");
                         send(sockfd, (void *)&packet, sizeof(struct PACKET), 0);
                 }
                 else if (strcmp(buffer,"login\n") == 0) {
@@ -41,30 +50,46 @@ void client(int argc, char *argv[], int sockfd, int port) {
                         printf("logging in.....\n");
                         send(sockfd, (void *)&packet, sizeof(struct PACKET), 0);
                 }
-                else if(!strcmp(buffer,"1\n")) {
-                        packet.list = 1;
-                        packet.nameCounter = 0;
-                        send(sockfd, (void *)&packet, sizeof(struct PACKET), 0);
-                }
-
-                else if(strcmp(buffer,"2\n") == 0) {
+                else if(strcmp(buffer,"pm\n") == 0) {
 
                         memset(&packet, 0, sizeof(struct PACKET));
-                        strcpy(packet.alias, argv[2]);
-                        printf("Enter user name:");
+                        strcpy(packet.alias, argv[arg_finder("-id") +1]);
+                        printf("To:");
                         bzero(buffer,1024);
                         fgets(buffer,1024,stdin);
-
-                        strcpy(packet.connectTo,argv[3]);
-                        printf("Enter message:");
+                        strncpy(packet.connectTo,buffer,strlen(buffer)-1);
+                        printf(":");
                         bzero(buffer,1024);
                         fgets(buffer,1024,stdin);
                         strcpy(packet.buff,buffer);
-                        packet.list = 0;
-                        packet.nameCounter = 0;
+                        strcpy(packet.option, "pm");
 
                         int sent = send(sockfd, (void *)&packet, sizeof(struct PACKET), 0);
-                        printf("%d\n",sockfd);
+                        if (sent < 0) {
+                            perror("error sending message");
+                            exit(1);
+                        }
+
+                }
+                else if(strcmp(buffer,"all\n") == 0) {
+
+                        memset(&packet, 0, sizeof(struct PACKET));
+                        strcpy(packet.alias, argv[arg_finder("-id") +1]);
+                        printf("To:");
+                        bzero(buffer,1024);
+                        fgets(buffer,1024,stdin);
+                        strncpy(packet.connectTo,buffer,strlen(buffer)-1);
+                        printf(":");
+                        bzero(buffer,1024);
+                        fgets(buffer,1024,stdin);
+                        strcpy(packet.buff,buffer);
+                        strcpy(packet.option, "all");
+
+                        int sent = send(sockfd, (void *)&packet, sizeof(struct PACKET), 0);
+                        if (sent < 0) {
+                            perror("error sending message");
+                            exit(1);
+                        }
 
                 }
 
@@ -119,15 +144,8 @@ void *server_handler(void *fd) {
                         perror("No bytes received at client");
                         exit(0);
                 }
-                if(pack.list == 1) {
-                        printf("List of online users is:\n");
-                        int i;
-                        for( i = 0; i < pack.nameCounter; i++) {
-                                // printf("%d %s",(i+1),pack.names[i]);
-                        }
-                }
                 else {
-                        printf("\nMessage received from %s: %s \n",pack.alias,pack.buff);
+                        printf("\x1B[32m %s:\033[0m %s  \n",pack.alias,pack.buff);
                 }
         }
 }
