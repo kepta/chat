@@ -25,84 +25,83 @@ void sigintHandler(int sig_num)
 }
 
 struct THREAD_INFO {
-    pthread_t thread_ID; // thread's pointer
-    int sockfd; // socket file descriptor
-    char alias[ALIASLEN]; // client's alias
-  
+        pthread_t thread_ID; // thread's pointer
+        int sockfd; // socket file descriptor
+        char alias[ALIASLEN]; // client's alias
+
 };
 
 struct PACKET {
         char option[OPTLEN]; // instruction
         char alias[ALIASLEN]; // client's alias
         char buff[BUFFSIZE];
-	char connectTo[20];
-	int list;
-	char *names[20];
-	
- // payload
+        char connectTo[20];
+        int list;
+        char *names[20];
+        int nameCounter;
+
+        // payload
 };
 
 void *client_handler(void *fd) {
-    struct THREAD_INFO thread_info = *(struct THREAD_INFO *) fd;
-    int bytes;
-    struct PACKET packet;
-    //struct PACKET packetToSend;
-    
-  
-    while(1) {
-        bytes = recv(thread_info.sockfd,  (void *)&packet, sizeof(struct PACKET), 0);
-        if (!bytes) { 
-	    perror("No bytes received at server");
-	    exit(0);
-       }
-	
-	globalList[tracker] = thread_info.sockfd;
-	globalListName[tracker] = packet.alias;
-	tracker++;
-	packet.nameCounter += 1;
+        struct THREAD_INFO thread_info = *(struct THREAD_INFO *) fd;
+        int bytes;
+        struct PACKET packet;
+        //struct PACKET packetToSend;
+        globalList[tracker] = thread_info.sockfd;
+        tracker++;
 
-	if(packet.list == 1){
-		int i;
-		for( i = 0 ; i< tracker ; i++)
-			packet.names[i] = globalListName[i];
+        while(1) {
+                bytes = recv(thread_info.sockfd,  (void *)&packet, sizeof(struct PACKET), 0);
+                globalListName[tracker] = packet.alias;
+                if (!bytes) {
+                        perror("No bytes received at server");
+                        exit(0);
+                }
 
-		if(send(thread_info.sockfd, (void *)&packet, sizeof(struct PACKET), 0) < 0){
-			perror("Send to client error");
-			exit(1);
-		}
-			
-	}
-	else
-	 {
-	int i;
-	for(i = 0; i < tracker ; i++){
+                if(packet.list == 1) {
+                        int i;
+                        for( i = 0; i < tracker; i++)
+                                packet.names[i] = globalListName[i];
+                                packet.nameCounter = tracker;
 
-	  if(strcmp(packet.connectTo,globalListName[i]) == 0){	
-		if(send(globalList[i], (void *)&packet, sizeof(struct PACKET), 0) < 0){
-			
-			perror("Send to next client error");
-			exit(1);
-		}
-		break;
-	  }
-		
-	}
+                        if(send(thread_info.sockfd, (void *)&packet, sizeof(struct PACKET), 0) < 0) {
+                                perror("Send to client error");
+                                exit(1);
+                        }
 
-	if(i == tracker){
-		
-			strcpy(packet.buff,"User is offline!");
-			if(send(thread_info.sockfd, (void *)&packet, sizeof(struct PACKET), 0) < 0){
-			perror("Send to client error");
-			exit(1);
-			}
-		 }
-		
-    	}
-    }
+                }
+                else
+                {
+                        int i;
+                        for(i = 0; i < tracker; i++) {
+
+                                if(strcmp(packet.connectTo,globalListName[i]) == 0) {
+                                        if(send(globalList[i], (void *)&packet, sizeof(struct PACKET), 0) < 0) {
+
+                                                perror("Send to next client error");
+                                                exit(1);
+                                        }
+                                        break;
+                                }
+
+                        }
+
+                        if(i == tracker) {
+
+                                strcpy(packet.buff,"User is offline!");
+                                if(send(thread_info.sockfd, (void *)&packet, sizeof(struct PACKET), 0) < 0) {
+                                        perror("Send to client error");
+                                        exit(1);
+                                }
+                        }
+
+                }
+        }
 }
 int main( int argc, char *argv[] )
 {
-         int sockfd,newsockfd, portno, clilen;
+        int sockfd,newsockfd, portno, clilen;
         // char buffer[256];
         struct sockaddr_in serv_addr, cli_addr;
         // int n;
@@ -152,14 +151,14 @@ int main( int argc, char *argv[] )
                 clilen = sizeof(cli_addr);
                 if ((newsockfd = accept(sockfd, (struct sockaddr *)&cli_addr, (socklen_t*)&clilen)) == -1) {
 
-                    perror("Error accepting connection");
-                    exit(1);
+                        perror("Error accepting connection");
+                        exit(1);
                 }
                 else {
-                    printf("Connection requested received...\n");
-                    struct THREAD_INFO thread_info;
-                    thread_info.sockfd = newsockfd;
-                    pthread_create(&thread_info.thread_ID, NULL, client_handler, ( void *) &thread_info);
+                        printf("Connection requested received...\n");
+                        struct THREAD_INFO thread_info;
+                        thread_info.sockfd = newsockfd;
+                        pthread_create(&thread_info.thread_ID, NULL, client_handler, ( void *) &thread_info);
                 }
                 // bzero(buffer,256);
                 // n = read( newsockfd,buffer,255 );
