@@ -19,6 +19,7 @@ struct PACKET {
 	char connectTo[20];
 	int list;
 	char *names[20];
+	int nameCounter;
 
 };
 
@@ -80,8 +81,8 @@ struct PACKET pack;
 	if(pack.list == 1){
 	printf("List of online users is:\n");
 	int i;
-	for( i = 0 ; ;i++){
-		
+	for( i = 0 ;i < pack.nameCounter ;i++){
+		printf("%d %s",i+1,pack.names[i]);
 	}
 	else
     		printf("\nMessage received from %s: %s \n",pack.alias,pack.buff);
@@ -119,14 +120,14 @@ int main(int argc, char *argv[])
                  pthread_create(&thread_info.thread_ID, NULL, server_handler, ( void *) &thread_info);
                 while(1){
 			sleep(1);
-                        printf("1. See online users\n2. Message user!");
+                        printf("1. See online users!\n2. Message user! \n");
                         bzero(buffer,1024);
                         fgets(buffer,1024,stdin);
-			printf("this%s\n",buffer);
 
 			if(!strcmp(buffer,"1\n")){
 					
 				packet.list = 1;	
+				packet.nameCounter = 0;
 	                        send(sockfd, (void *)&packet, sizeof(struct PACKET), 0);
 			}
 
@@ -143,7 +144,8 @@ int main(int argc, char *argv[])
                         fgets(buffer,1024,stdin);
                         strcpy(packet.buff,buffer);
 			packet.list = 0;
-/* send request to close this connetion */
+			packet.nameCounter = 0;
+
                         int sent = send(sockfd, (void *)&packet, sizeof(struct PACKET), 0);
                         printf("%d\n",sockfd);
 		 

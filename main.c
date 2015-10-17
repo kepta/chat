@@ -59,6 +59,7 @@ void *client_handler(void *fd) {
 	globalList[tracker] = thread_info.sockfd;
 	globalListName[tracker] = packet.alias;
 	tracker++;
+	packet.nameCounter += 1;
 
 	if(packet.list == 1){
 		int i;
