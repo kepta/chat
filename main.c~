@@ -75,6 +75,7 @@ void *client_handler(void *fd) {
 	if(i == tracker){
 		
 		strcpy(packet.buff,"User is offline!");
+
 		if(send(thread_info.sockfd, (void *)&packet, sizeof(struct PACKET), 0) < 0){
 		perror("Send to client error");
 		exit(1);

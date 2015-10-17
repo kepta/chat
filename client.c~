@@ -11,6 +11,10 @@
 #define ALIASLEN 40
 #define BUFFSIZE 1024
 #define OPTLEN 16
+int myGlobalFd = 0;
+char buffer[1024];
+int sockfd, portno, n;
+struct PACKET packet;
 
 struct PACKET {
         char option[OPTLEN]; // instruction
@@ -82,9 +86,7 @@ struct PACKET pack;
 
 int main(int argc, char *argv[])
 {
-	char buffer[1024];
-	int sockfd, portno, n;
-	struct PACKET packet;
+        
         struct sockaddr_in serv_addr;
         struct hostent *server;
 	
