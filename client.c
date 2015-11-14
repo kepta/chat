@@ -58,7 +58,7 @@ void client(int argc, char *argv[], int sockfd, int port) {
                         bzero(buffer,1024);
                         fgets(buffer,1024,stdin);
                         strncpy(packet.connectTo,buffer,strlen(buffer)-1);
-                        printf(":");
+                        printf("me:");
                         bzero(buffer,1024);
                         fgets(buffer,1024,stdin);
                         strcpy(packet.buff,buffer);
@@ -145,7 +145,8 @@ void *server_handler(void *fd) {
                         exit(0);
                 }
                 else {
-                        printf("\x1B[32m %s:\033[0m %s  \n",pack.alias,pack.buff);
+                        printf("\x1B[32m %s: \033[0m %s",pack.alias,pack.buff);
+
                 }
         }
 }
