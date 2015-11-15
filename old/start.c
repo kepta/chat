@@ -46,7 +46,7 @@ int main(int argc, char **argv) {
   char *addr = argv[1];
   char *audio_port = "55555";
   char *video_port = "55556";
-  
+
   vid_options_t vopt;             //
 
   int width = DEFAULT_WIDTH;
@@ -54,7 +54,7 @@ int main(int argc, char **argv) {
 
   setlocale(LC_ALL, "");
   memset(&vopt, 0, sizeof(vid_options_t));
- 
+
     vopt.width = DEFAULT_WIDTH;
     vopt.height = DEFAULT_HEIGHT;
     vopt.render_type = 0;
@@ -69,7 +69,6 @@ int main(int argc, char **argv) {
     // Start both audio and video.
     start_audio(addr, audio_port);
     start_video(addr, video_port, &vopt);
-    
+
   return 0;
 }
-
