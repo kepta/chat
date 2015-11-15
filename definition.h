@@ -4,6 +4,7 @@ char **ARGV;
 #define ALIASLEN 40
 #define BUFFSIZE 1024
 #define OPTLEN 16
+#define KGRN  "\x1B[32m"
 
 struct PACKET {
         char option[OPTLEN]; // instruction
