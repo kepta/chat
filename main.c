@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <netdb.h>
 #include <netinet/in.h>
-#include <string.h>
 #include <signal.h>
 #include <pthread.h>
 
@@ -18,7 +17,6 @@ void interrup_handler(int sig_num);
 void usage(FILE *stream);
 
 int main( int argc, char *argv[]) {
-    test();
     if (argc < 2) {
         usage(stderr);
         exit(1);
