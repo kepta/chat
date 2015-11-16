@@ -108,7 +108,9 @@ int init_udp(int port, int *sockfd) {
   return 0;
 }
 
-
+int udp_send(connection_t *con, const void *buf, size_t buflen) {
+    return sendto(con->socket, buf, buflen, UDP_FLAGS, (struct sockaddr *)&con->addr, con->addr_len);
+}
 // UDP Listener code!
 
 int receive_messages (
