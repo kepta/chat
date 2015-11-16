@@ -16,3 +16,4 @@ void test();
 int arg_finder(char *match,int argc, char *argv[]);
 int connect_udp(char *server, char *port, connection_t *con);
 int init_udp(int port, int *sockfd);
+int receive_messages ( int socket, unsigned long max_packet_size  ) ; 

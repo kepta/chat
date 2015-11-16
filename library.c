@@ -107,3 +107,48 @@ int init_udp(int port, int *sockfd) {
   /* success */
   return 0;
 }
+
+
+// UDP Listener code!
+
+int receive_messages (
+    int socket,
+    unsigned long max_packet_size  )               {
+
+  /* A stack allocated connection struct to store any data
+     about the connection we recieve. */
+
+  connection_t con;
+  char buf[max_packet_size];
+
+  /* Loop on recvfrom. */
+  while (1) {
+    memset(buf, 0, max_packet_size);
+    int recv_len = recvfrom(socket, buf, max_packet_size, 0, (struct sockaddr *)&(con.addr), &(con.addr_len));
+
+// #ifdef __linux__
+// /* Temporarily disable bandwidth.  Broken for OSX. */
+//     if (delta == -1) {
+//       clock_gettime(CLOCK_MONOTONIC, &prevPacket);
+//       delta = 0;
+//     } else {
+//       clock_gettime(CLOCK_MONOTONIC, &currPacket);
+//       delta = currPacket.tv_nsec - prevPacket.tv_nsec;
+//       clock_gettime(CLOCK_MONOTONIC, &prevPacket);
+//       bandwidth_index = (bandwidth_index + 1) % BANDWIDTH_BUFLEN;
+//       bandwidth_buf[bandwidth_index] = (double)recv_len/delta;
+//     }
+// #endif
+
+    /* Handle error UDP style (try again). */
+    if (recv_len < 0) {
+      fprintf(stderr, "Recieve failed. errno: %d\n", errno);
+      continue;
+    }
+    printf("%s\n",buf);
+    // (*callback)(&con, buf, recv_len);
+
+  }
+
+  return -1;
+}
