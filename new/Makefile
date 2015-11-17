@@ -19,11 +19,11 @@ CFLAGS_DEBUG+=-O0 -g3 -Werror -DDEBUG
 LDFLAGS+=-lpthread -lncurses -lportaudio -lm
 LDFLAGS+=`pkg-config --libs opencv`
 
-all: p2pvc
+all: chatX
 
 .PHONY: all clean debug
 
-p2pvc: $(OBJS)
+chatX: $(OBJS)
 	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
 
 $(OBJS): | $(OBJDIR)
@@ -34,4 +34,4 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.c $(wildcard $(INCDIR)/*.h) Makefile
 	$(CC) $(CFLAGS) $< -c -o $@
 
 clean:
-	rm -rf $(OBJDIR) p2pvc
+	rm -rf $(OBJDIR) chatX
