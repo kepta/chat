@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <netinet/in.h>
 #include <time.h>
-#include "library.h"
+#include "lib/library.h"
 
 int arg_finder(char *match,int argc, char *argv[]) {
     for(int i = 1; i < argc; i++) {
@@ -108,14 +108,16 @@ int init_udp(int port, int *sockfd) {
   return 0;
 }
 
+
 int udp_send(connection_t *con, const void *buf, size_t buflen) {
     return sendto(con->socket, buf, buflen, UDP_FLAGS, (struct sockaddr *)&con->addr, con->addr_len);
 }
 // UDP Listener code!
 
 int receive_messages (
+    void (*callback)(connection_t *, void *, size_t),
     int socket,
-    unsigned long max_packet_size  )               {
+    unsigned long max_packet_size)               {
 
   /* A stack allocated connection struct to store any data
      about the connection we recieve. */
@@ -147,8 +149,8 @@ int receive_messages (
       fprintf(stderr, "Recieve failed. errno: %d\n", errno);
       continue;
     }
-    printf("%s\n",buf);
-    // (*callback)(&con, buf, recv_len);
+//    printf("%s\n",buf);
+    (*callback)(&con, buf, recv_len);
 
   }
 

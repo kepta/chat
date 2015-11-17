@@ -1,14 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "library.h"
+#include "lib/library.h"
 
 #include <errno.h>
 #include <unistd.h>
 #include <assert.h>
 #include <portaudio.h>
-#include "pa_ringbuffer.h"
-#include "pa_util.h"
+#include "lib/pa_ringbuffer.h"
+#include "lib/pa_util.h"
 
 
 #define SAMPLE_RATE  (44100)
@@ -32,6 +32,18 @@ typedef struct {
 } paTestData;
 
 static paTestData data;
+
+
+
+static void callback(connection_t *con, void *buf, size_t length) {
+
+  ring_buffer_size_t elementsWriteable = PaUtil_GetRingBufferWriteAvailable(&data.outputRingBuffer);
+  ring_buffer_size_t elementsToWrite = MIN(elementsWriteable, length / data.outputRingBuffer.elementSizeBytes);
+  const SAMPLE *rptr = (const SAMPLE*)buf;
+  PaUtil_WriteRingBuffer(&data.outputRingBuffer, rptr, elementsToWrite);
+
+}
+
 
 static void *listener(void *args) {
   int socket;
@@ -96,19 +108,10 @@ static unsigned NextPowerOf2(unsigned val) {
 }
 
 
-static void callback(connection_t *con, void *buf, size_t length) {
-
-  ring_buffer_size_t elementsWriteable = PaUtil_GetRingBufferWriteAvailable(&data.outputRingBuffer);
-  ring_buffer_size_t elementsToWrite = MIN(elementsWriteable, length / data.outputRingBuffer.elementSizeBytes);
-  const SAMPLE *rptr = (const SAMPLE*)buf;
-  PaUtil_WriteRingBuffer(&data.outputRingBuffer, rptr, elementsToWrite);
-
-}
-
 
 static connection_t *con;
 
-void audio(char *peer, char *port) {
+int audio(char *peer, char *port) {
 
     printf("%s %s\n", peer, port);
 
@@ -119,6 +122,13 @@ void audio(char *peer, char *port) {
         printf("udp established\n");
     }
 
+    PaStreamParameters  inputParameters,
+                          outputParameters;
+      PaStream *inputStream;
+      PaStream *outputStream;
+      PaError             err = paNoError;
+      unsigned            numSamples;
+      unsigned            numBytes;
   /* Make a ring buffer that will buffer about half a second.  Reasonable
    * level of latency before droping.
    * Make one for both input and output.*/
@@ -245,7 +255,6 @@ done:
     err = 1;          /* Always return 0 or 1, but no other return codes. */
   }
   return err;
-
 }
 
 
