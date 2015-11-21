@@ -13,7 +13,7 @@
 #include "lib/audio.h"
 #include "lib/video.h"
 #define DEFAULT_WIDTH 200
-#define DEFAULT_HEIGHT 200
+#define DEFAULT_HEIGHT 110
 
 typedef struct {
     char *ipaddr;
@@ -81,21 +81,6 @@ void all_shutdown(int signal) {
 
 void usage(FILE *stream) {
   fprintf(stream,
-    "Usage: p2pvc [-h] [server] [options]\n"
-    "A point to point color terminal video chat.\n"
-    "\n"
-    "  -v    Enable video chat.\n"
-    "  -d    Dimensions of video in either [width]x[height] or [width]:[height]\n"
-    "  -A    Audio port.\n"
-    "  -V    Video port.\n"
-    "  -b    Display incoming bandwidth in the top-right of the video display.\n"
-    "  -e    Print stderr (which is by default routed to /dev/null).\n"
-    "  -c    Use a specified color (i.e green is 0:100:0).\n"
-    "  -B    Render in Braille.\n"
-    "  -I    Set threshold for braille.\n"
-    "  -E    Use an edge filter.\n"
-    "  -a    Use custom ascii to print the video.\n"
-    "\n"
-    "Report bugs to https://github.com/mofarrell/p2pvc/issues.\n"
+    "Usage: xchat [-h] [server] [options]\n"
   );
 }
