@@ -10,6 +10,8 @@ WINDOW *main_screen;
 static int intensity_threshold = 25;
 static double saturation = 2.0;
 static char *ascii_values = " ..::--==+++***###%%%%%%%%@@@@@@@";
+// static char *ascii_values = " ..::--==░░░░░░░▒▒▒▒▒▒▒▓▓▓▓▓█████";
+
 static int monochrome = 0;
 char gr; char gg; char gb;
 
@@ -40,7 +42,7 @@ void init_screen(display_options_t *dopt){
 }
 
 /*
- * crazy shifting is to set up every color 
+ * crazy shifting is to set up every color
  */
 void init_colors(void) {
   int i;
@@ -100,7 +102,7 @@ chtype to_braille(unsigned char byte) {
 
 unsigned char from_braille(chtype c) {
   char byte = (c - 10240) & 0xFF;
-  return 
+  return
   ((byte << 7) & (1 << 7)) |
   ((byte << 3) & (1 << 6)) |
   ((byte << 4) & (1 << 5)) |

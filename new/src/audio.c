@@ -256,13 +256,3 @@ done:
   }
   return err;
 }
-
-
-#ifdef AUDIOONLY
-int main(int argc, char *argv[]) {
-  if (argc < 2) {
-    fprintf(stderr, "Must pass client to connect to.\n");
-  }
-  return audio(argv[1], "55555");
-}
-#endif
