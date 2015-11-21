@@ -12,8 +12,8 @@
 #include "lib/library.h"
 #include "lib/audio.h"
 #include "lib/video.h"
-#define DEFAULT_WIDTH 100
-#define DEFAULT_HEIGHT 40
+#define DEFAULT_WIDTH 640
+#define DEFAULT_HEIGHT 480
 
 typedef struct {
     char *ipaddr;

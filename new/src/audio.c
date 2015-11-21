@@ -15,7 +15,7 @@
 #define FRAMES_PER_BUFFER (512)
 #define NUM_CHANNELS    (2)
 #define NUM_WRITES_PER_BUFFER   (4)
-#define SIZE_TO_SEND (1024)
+#define SIZE_TO_SEND (4096)
 #define MIN_SIZE_TO_SEND (512)
 
 #define MIN(x, y) ((x) > (y) ? (y) : (x))
